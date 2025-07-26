@@ -1,43 +1,675 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ZidhuGram</title>
-  <style>
-    body {
-      margin: 0;
-      background: #eee;
-      font-family: sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex's Portfolio - 3D Designer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for body text, and a bold geometric font for headings -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        /* Custom CSS for specific styles not easily covered by Tailwind or for overrides */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000; /* Deep black background */
+            color: #fff; /* White text */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
 
-    .header {
-      background-color: #7fff00; /* Neon green */
-      border-radius: 30px;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 90%;
-      max-width: 400px;
-      margin: 30px auto;
-    }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', sans-serif; /* Bold geometric font for headings */
+            letter-spacing: 0.05em; /* Slightly increased letter spacing for headings */
+        }
 
-    .logo {
-      font-weight: 800;
-      font-size: 1.3rem;
-    }
+        /* Custom gradient for buttons */
+        .btn-gradient {
+            background: linear-gradient(90deg, #8A2BE2, #FF1493); /* Purple to Pink */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    .menu-icon {
-      font-size: 1.8rem;
-      cursor: pointer;
-    }
-  </style>
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Scroll animation classes */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Specific animation for the 3D placeholder / image */
+        #hero-character {
+            width: 400px; /* Adjust size as needed */
+            height: 400px;
+            max-width: 80vw;
+            max-height: 80vw;
+            margin: 0 auto;
+            display: block;
+            border-radius: 9999px; /* Rounded corners for the image */
+            object-fit: cover; /* Ensure image covers the area */
+        }
+
+        /* Portfolio item hover effect */
+        .portfolio-item img {
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .portfolio-item:hover img {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        /* Abstract shapes for footer - using SVG for more control */
+        .footer-shape {
+            fill: currentColor; /* Inherit color from parent for easy theming */
+            transition: transform 0.3s ease;
+        }
+
+        .footer-shape:hover {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        /* Ensure full viewport height for sections */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 1rem; /* Consistent padding */
+        }
+
+        /* Specific background for contact section */
+        #contact {
+            background-color: #f3f4f6; /* Light grey background */
+            color: #1a202c; /* Dark text for contrast */
+        }
+
+        #contact input, #contact textarea {
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            color: #1a202c;
+        }
+
+        #contact input::placeholder, #contact textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Styles for the Horizontal Scroll Section (Portfolio) */
+        #portfolio {
+            height: 300vh; /* Make the section tall enough to allow vertical scrolling */
+            position: relative; /* Needed for sticky positioning of inner content */
+            display: block; /* Override flex to allow for sticky content */
+            padding: 0; /* Remove padding to allow inner content to fill */
+        }
+
+        #portfolio .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh; /* The sticky content takes up 100vh */
+            overflow: hidden; /* Hide overflow from horizontal scroll */
+            display: flex;
+            flex-direction: column; /* Align heading and container vertically */
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            background-color: #000; /* Ensure black background for sticky part */
+        }
+
+        #portfolio .horizontal-scroll-container {
+            display: flex;
+            flex-wrap: nowrap; /* Keep items in a single row */
+            padding: 2rem; /* Padding around the cards */
+            /* Will be transformed by JS */
+        }
+
+        #portfolio .portfolio-item {
+            flex-shrink: 0; /* Prevent items from shrinking */
+            width: 300px; /* Fixed width for cards */
+            margin-right: 2rem; /* Space between cards */
+            background-color: #1a1a1a; /* Darker background for cards */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+        }
+
+        /* Adjustments for smaller screens */
+        @media (max-width: 768px) {
+            #portfolio .portfolio-item {
+                width: 250px; /* Smaller cards on mobile */
+            }
+        }
+
+        /* Custom styling for ALEX TURNER text in footer */
+        .alex-turner-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 4rem; /* Adjust as needed */
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: transparent; /* Make text transparent */
+            -webkit-text-stroke: 2px white; /* Add white stroke */
+            text-stroke: 2px white;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); /* Subtle glow */
+        }
+
+        @media (min-width: 768px) {
+            .alex-turner-text {
+                font-size: 5rem;
+            }
+        }
+        @media (min-width: 1024px) {
+            .alex-turner-text {
+                font-size: 6rem;
+            }
+        }
+
+        /* Specific styling for footer SVG shapes */
+        .footer-svg-shapes {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100px; /* Adjust height as needed */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .footer-svg-shapes svg {
+            height: 100%;
+            width: 100%;
+            max-width: 1200px; /* Max width for the entire SVG row */
+            display: block;
+        }
+
+        .footer-svg-shapes .shape-group {
+            transform-origin: center center;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-svg-shapes .shape-group:hover {
+            transform: scale(1.1); /* Slight hover effect for groups */
+        }
+    </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">ZidhuGram</div>
-    <div class="menu-icon">&#9776;</div> <!-- Hamburger menu -->
-  </div>
+
+    <!-- Fixed Navigation Bar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-80 backdrop-blur-sm p-4 flex justify-between items-center shadow-lg">
+        <div class="text-white text-sm font-bold tracking-wider rounded-full px-3 py-1 border border-gray-700">Built on Wix Studio</div>
+        <ul class="flex space-x-8 text-white text-lg font-semibold tracking-wide">
+            <li><a href="#about" class="hover:text-purple-400 transition-colors duration-300">ABOUT</a></li>
+            <li><a href="#customers" class="hover:text-purple-400 transition-colors duration-300">CUSTOMERS</a></li>
+            <li><a href="#projects" class="hover:text-purple-400 transition-colors duration-300">PROJECTS</a></li>
+            <li><a href="#contact" class="hover:text-purple-400 transition-colors duration-300">CONTACT</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="bg-black text-white flex flex-col items-center justify-center text-center px-4">
+        <div class="max-w-4xl mx-auto animate-on-scroll">
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-extrabold mb-6">HI, I'M ALEX</h1>
+            <p class="text-xl md:text-2xl lg:text-3xl font-light leading-relaxed mb-10 max-w-2xl mx-auto">
+                A 3D DESIGNER PASSIONATE ABOUT CRAFTING BOLD AND MEMORABLE PROJECTS 😉
+            </p>
+            <!-- 3D Character Image Placeholder -->
+            <img id="hero-character" src="https://placehold.co/400x400/000000/ffffff?text=Loading+3D+Character..." alt="3D Character Placeholder" class="mb-10 rounded-full">
+            <button class="btn-gradient text-white font-bold py-4 px-8 rounded-full text-lg shadow-lg">CONTACT ME</button>
+        </div>
+    </section>
+
+    <!-- Customers/Partners Section -->
+    <section id="customers" class="bg-black text-white flex flex-col items-center justify-center px-4">
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 animate-on-scroll">OUR CUSTOMERS</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-6xl mx-auto animate-on-scroll">
+            <!-- Placeholder Logos - use SVG or simple text for demonstration -->
+            <div class="flex flex-col items-center justify-center p-4">
+                <svg class="w-24 h-24 text-gray-400 filter grayscale hover:grayscale-0 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/></svg>
+                <p class="mt-2 text-sm text-gray-400">ProtoSphere</p>
+            </div>
+            <div class="flex flex-col items-center justify-center p-4">
+                <svg class="w-24 h-24 text-gray-400 filter grayscale hover:grayscale-0 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/></svg>
+                <p class="mt-2 text-sm text-gray-400">Thelma Wilson</p>
+            </div>
+            <div class="flex flex-col items-center justify-center p-4">
+                <svg class="w-24 h-24 text-gray-400 filter grayscale hover:grayscale-0 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/></svg>
+                <p class="mt-2 text-sm text-gray-400">Impact Creative</p>
+            </div>
+            <div class="flex flex-col items-center justify-center p-4">
+                <svg class="w-24 h-24 text-gray-400 filter grayscale hover:grayscale-0 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/></svg>
+                <p class="mt-2 text-sm text-gray-400">SCALER</p>
+            </div>
+            <div class="flex flex-col items-center justify-center p-4">
+                <svg class="w-24 h-24 text-gray-400 filter grayscale hover:grayscale-0 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/></svg>
+                <p class="mt-2 text-sm text-gray-400">Pixel Forge</p>
+            </div>
+            <div class="flex flex-col items-center justify-center p-4">
+                <svg class="w-24 h-24 text-gray-400 filter grayscale hover:grayscale-0 transition-all duration-300" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8zM11 7h2v6h-2V7zm0 8h2v2h-2v-2z"/></svg>
+                <p class="mt-2 text-sm text-gray-400">Violeta Kurl</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Showcase Section with Horizontal Scroll -->
+    <section id="portfolio">
+        <div class="sticky-wrapper">
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center animate-on-scroll">PORTFOLIO</h2>
+            <div class="horizontal-scroll-container">
+                <!-- Portfolio Item 1 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/8A2BE2/ffffff?text=Project+1" alt="Portfolio Project 1" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Abstract Blobs</h3>
+                        <p class="text-gray-400 text-sm">3D Render, Animation</p>
+                    </div>
+                </div>
+                <!-- Portfolio Item 2 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/FF1493/ffffff?text=Project+2" alt="Portfolio Project 2" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Organic Shapes</h3>
+                        <p class="text-gray-400 text-sm">Product Visualization</p>
+                    </div>
+                </div>
+                <!-- Portfolio Item 3 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/32CD32/ffffff?text=Project+3" alt="Portfolio Project 3" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Vibrant Geometry</h3>
+                        <p class="text-gray-400 text-sm">Motion Graphics</p>
+                    </div>
+                </div>
+                <!-- Portfolio Item 4 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/00BFFF/ffffff?text=Project+4" alt="Portfolio Project 4" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Fluid Dynamics</h3>
+                        <p class="text-gray-400 text-sm">Simulations</p>
+                    </div>
+                </div>
+                <!-- Portfolio Item 5 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/FFA500/ffffff?text=Project+5" alt="Portfolio Project 5" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Abstract Landscapes</h3>
+                        <p class="text-gray-400 text-sm">Concept Art</p>
+                    </div>
+                </div>
+                <!-- Portfolio Item 6 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/9400D3/ffffff?text=Project+6" alt="Portfolio Project 6" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Sci-Fi Elements</h3>
+                        <p class="text-gray-400 text-sm">Game Assets</p>
+                    </div>
+                </div>
+                <!-- Portfolio Item 7 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/FF6347/ffffff?text=Project+7" alt="Portfolio Project 7" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Digital Sculptures</h3>
+                        <p class="text-gray-400 text-sm">Concept Design</p>
+                    </div>
+                </div>
+                <!-- Portfolio Item 8 -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/4682B4/ffffff?text=Project+8" alt="Portfolio Project 8" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">VFX Elements</h3>
+                        <p class="text-gray-400 text-sm">Visual Effects</p>
+                    </div>
+                </div>
+                <!-- Adding more items to ensure horizontal scroll -->
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/FFD700/ffffff?text=Project+9" alt="Portfolio Project 9" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Abstract UI</h3>
+                        <p class="text-gray-400 text-sm">Interface Design</p>
+                    </div>
+                </div>
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/ADFF2F/ffffff?text=Project+10" alt="Portfolio Project 10" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Nature Renders</h3>
+                        <p class="text-gray-400 text-sm">Environmental Art</p>
+                    </div>
+                </div>
+                <div class="portfolio-item bg-gray-900 rounded-xl overflow-hidden shadow-lg animate-on-scroll">
+                    <img src="https://placehold.co/400x300/800080/ffffff?text=Project+11" alt="Portfolio Project 11" class="w-full h-48 object-cover rounded-t-xl">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2">Character Concepts</h3>
+                        <p class="text-gray-400 text-sm">Illustration</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about" class="bg-black text-white flex flex-col items-center justify-center text-center px-4 relative">
+        <!-- Abstract 3D shapes as background elements -->
+        <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-purple-600 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-40 h-40 bg-pink-600 rounded-full blur-3xl opacity-30 animate-pulse animation-delay-2000"></div>
+
+        <h2 class="text-4xl md:text-5xl font-bold mb-8 animate-on-scroll">ABOUT ME</h2>
+        <p class="text-lg md:text-xl leading-relaxed max-w-3xl mx-auto mb-10 animate-on-scroll">
+            With over five years of experience in design, I specialize in branding, web design, and user experience.
+            I love collaborating with businesses that want to stand out and showcase their best side!
+            Let's create something amazing together!
+        </p>
+        <button class="btn-gradient text-white font-bold py-4 px-8 rounded-full text-lg shadow-lg animate-on-scroll">CONTACT ME</button>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="bg-black text-white flex flex-col items-center justify-center px-4">
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 animate-on-scroll">PROJECTS</h2>
+        <div class="max-w-4xl w-full space-y-8">
+            <!-- Project Item 1 -->
+            <div class="bg-gray-900 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-lg animate-on-scroll">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <span class="text-4xl font-bold text-gray-400">01</span>
+                    <div>
+                        <h3 class="text-2xl font-semibold">CLIENT</h3>
+                        <p class="text-gray-400">Project Name / Description</p>
+                    </div>
+                </div>
+                <button class="bg-white text-black font-semibold py-3 px-6 rounded-full hover:bg-gray-200 transition-colors duration-300">LIVE PROJECT</button>
+            </div>
+            <!-- Project Item 2 -->
+            <div class="bg-gray-900 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-lg animate-on-scroll">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <span class="text-4xl font-bold text-gray-400">02</span>
+                    <div>
+                        <h3 class="text-2xl font-semibold">CLIENT</h3>
+                        <p class="text-gray-400">Pixel Forge</p>
+                    </div>
+                </div>
+                <button class="bg-white text-black font-semibold py-3 px-6 rounded-full hover:bg-gray-200 transition-colors duration-300">LIVE PROJECT</button>
+            </div>
+            <!-- Project Item 3 -->
+            <div class="bg-gray-900 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between shadow-lg animate-on-scroll">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <span class="text-4xl font-bold text-gray-400">03</span>
+                    <div>
+                        <h3 class="text-2xl font-semibold">CLIENT</h3>
+                        <p class="text-gray-400">MetaForm Creations</p>
+                    </div>
+                </div>
+                <button class="bg-white text-black font-semibold py-3 px-6 rounded-full hover:bg-gray-200 transition-colors duration-300">LIVE PROJECT</button>
+            </div>
+            <!-- Add more project items as needed -->
+        </div>
+    </section>
+
+    <!-- Testimonials Section (Placeholder) -->
+    <section id="testimonials" class="bg-black text-white flex flex-col items-center justify-center px-4">
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 animate-on-scroll">WHAT CLIENTS SAY</h2>
+        <div class="max-w-3xl w-full text-center space-y-8 animate-on-scroll">
+            <div class="bg-gray-900 p-8 rounded-xl shadow-lg">
+                <p class="text-lg italic mb-4">"Alex's work is exceptional! The attention to detail and creativity brought our vision to life. Highly recommended!"</p>
+                <p class="font-semibold">- Satisfied Client A</p>
+            </div>
+            <div class="bg-gray-900 p-8 rounded-xl shadow-lg">
+                <p class="text-lg italic mb-4">"Professional, responsive, and truly talented. Alex delivered beyond our expectations on every project."</p>
+                <p class="font-semibold">- Happy Customer B</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="flex flex-col md:flex-row items-center justify-center px-4 py-16 text-gray-900 relative">
+        <!-- Abstract 3D shape for contact section -->
+        <div class="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-purple-500 rounded-full blur-3xl opacity-40 animate-pulse"></div>
+
+        <div class="md:w-1/2 text-center md:text-left mb-10 md:mb-0 animate-on-scroll">
+            <h2 class="text-5xl md:text-6xl font-bold mb-6">LET'S GET IN TOUCH</h2>
+            <p class="text-xl md:text-2xl font-semibold mb-4">Email me directly:</p>
+            <a href="mailto:alex@3dturner.com" class="text-blue-600 hover:underline text-2xl md:text-3xl font-bold">alex@3dturner.com</a>
+        </div>
+        <div class="md:w-1/2 w-full max-w-md animate-on-scroll">
+            <form class="bg-white p-8 rounded-2xl shadow-xl space-y-6">
+                <input type="text" placeholder="Full Name*" class="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                <input type="email" placeholder="Email*" class="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                <input type="tel" placeholder="Phone" class="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <textarea placeholder="Message" rows="5" class="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                <button type="submit" class="btn-gradient text-white font-bold py-4 px-8 rounded-full text-lg w-full shadow-lg">SEND</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-black text-white py-16 px-4 text-center relative overflow-hidden">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0">
+            <div class="alex-turner-text animate-on-scroll">ALEX TURNER</div>
+            <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-12 text-lg animate-on-scroll">
+                <div>
+                    <h4 class="font-bold mb-2">SOCIAL</h4>
+                    <ul class="space-y-1">
+                        <li><a href="#" class="hover:text-purple-400 transition-colors duration-300">Instagram</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors duration-300">Facebook</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors duration-300">Artstation</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition-colors duration-300">Deviantart</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">CONTACT</h4>
+                    <ul class="space-y-1">
+                        <li><a href="mailto:alex@3dturner.com" class="hover:text-purple-400 transition-colors duration-300">alex@3dturner.com</a></li>
+                        <li>+1 (555) 123-4567</li>
+                        <li>123 Creative Lane, Suite 45</li>
+                        <li>Design City, CA 90210</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Abstract geometric shapes for footer -->
+        <div class="footer-svg-shapes">
+            <svg viewBox="0 0 1000 100" preserveAspectRatio="xMidYMid meet">
+                <!-- Shape 1 (Purple) - Butterfly-like -->
+                <g class="shape-group" transform="translate(0,0)">
+                    <path fill="#8A2BE2" d="M20 0 C0 20 0 80 20 100 L50 100 L50 0 Z M80 0 C100 20 100 80 80 100 L50 100 L50 0 Z"></path>
+                </g>
+                <!-- Shape 2 (Lime Green) - Four circles -->
+                <g class="shape-group" transform="translate(100,0)">
+                    <circle fill="#ADFF2F" cx="25" cy="25" r="20"></circle>
+                    <circle fill="#ADFF2F" cx="75" cy="25" r="20"></circle>
+                    <circle fill="#ADFF2F" cx="25" cy="75" r="20"></circle>
+                    <circle fill="#ADFF2F" cx="75" cy="75" r="20"></circle>
+                </g>
+                <!-- Shape 3 (White) - J/U shape -->
+                <g class="shape-group" transform="translate(200,0)">
+                    <path fill="white" d="M0 0 L100 0 L100 50 C100 80 80 100 50 100 C20 100 0 80 0 50 Z"></path>
+                </g>
+                <!-- Shape 4 (Purple) - Circle -->
+                <g class="shape-group" transform="translate(300,0)">
+                    <circle fill="#8A2BE2" cx="50" cy="50" r="40"></circle>
+                </g>
+                <!-- Shape 5 (Orange) - Triangle -->
+                <g class="shape-group" transform="translate(400,0)">
+                    <path fill="#FFA500" d="M0 100 L50 0 L100 100 Z"></path>
+                </g>
+                <!-- Shape 6 (White) - Half-circle/Rounded Rect -->
+                <g class="shape-group" transform="translate(500,0)">
+                    <path fill="white" d="M0 0 L100 0 L100 100 C100 100 50 100 0 100 Z"></path>
+                </g>
+                <!-- Shape 7 (Purple) - X/Diamond -->
+                <g class="shape-group" transform="translate(600,0)">
+                    <path fill="#8A2BE2" d="M0 50 L50 0 L100 50 L50 100 Z"></path>
+                </g>
+                <!-- Shape 8 (Lime Green) - Circle -->
+                <g class="shape-group" transform="translate(700,0)">
+                    <circle fill="#ADFF2F" cx="50" cy="50" r="40"></circle>
+                </g>
+                <!-- Shape 9 (White) - J/U shape -->
+                <g class="shape-group" transform="translate(800,0)">
+                    <path fill="white" d="M0 0 L100 0 L100 50 C100 80 80 100 50 100 C20 100 0 80 0 50 Z"></path>
+                </g>
+                <!-- Shape 10 (Pink) - Circle -->
+                <g class="shape-group" transform="translate(900,0)">
+                    <circle fill="#FF1493" cx="50" cy="50" r="40"></circle>
+                </g>
+            </svg>
+        </div>
+    </footer>
+
+    <script>
+        // Function to load the generated image for the hero character
+        async function loadGeneratedCharacterImage() {
+            const imgElement = document.getElementById('hero-character');
+            if (!imgElement) {
+                console.error("Hero character image element not found.");
+                return;
+            }
+
+            imgElement.src = "https://placehold.co/400x400/000000/ffffff?text=Generating+3D+Character..."; // Show loading text
+
+            const payload = { instances: { prompt: "A highly stylized 3D character, male, with messy dark hair, expressive eyebrows, and subtle ear piercings, looking thoughtful or slightly moody. The character should have a clean, modern, somewhat cartoonish aesthetic, suitable for a digital designer's portfolio. Rendered with soft lighting against a dark background, similar to the style in the Wix Studio video." }, parameters: { "sampleCount": 1} };
+            const apiKey = ""; // If you want to use models other than imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    imgElement.src = imageUrl;
+                    imgElement.alt = "AI Generated 3D Character";
+                } else {
+                    console.error("Failed to generate image or unexpected response structure:", result);
+                    imgElement.src = "https://placehold.co/400x400/FF0000/ffffff?text=Error+Loading"; // Error placeholder
+                    imgElement.alt = "Error loading 3D character";
+                }
+            } catch (error) {
+                console.error("Error fetching image:", error);
+                imgElement.src = "https://placehold.co/400x400/FF0000/ffffff?text=Error+Loading"; // Error placeholder
+                imgElement.alt = "Error loading 3D character";
+            }
+        }
+
+
+        // JavaScript for Scroll Animations (Intersection Observer)
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section:not(#portfolio) h1, section:not(#portfolio) h2, section:not(#portfolio) p, section:not(#portfolio) button, .portfolio-item, .footer-shape, .bg-gray-900');
+
+            const observerOptions = {
+                root: null, // viewport
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                // Add the base animation class to all elements that should animate
+                if (!section.classList.contains('fixed') && !section.classList.contains('absolute')) {
+                    section.classList.add('animate-on-scroll');
+                }
+                observer.observe(section);
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('nav a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Load the AI-generated character image after DOM is ready
+            loadGeneratedCharacterImage();
+
+            // Horizontal Scroll Logic for Portfolio Section
+            const portfolioSection = document.getElementById('portfolio');
+            const horizontalContainer = portfolioSection.querySelector('.horizontal-scroll-container');
+
+            // Function to update horizontal scroll
+            function updateHorizontalScroll() {
+                const sectionRect = portfolioSection.getBoundingClientRect();
+
+                // Calculate scroll progress within the section
+                // The scroll starts when the top of the section enters the viewport (top = 0)
+                // and ends when the bottom of the section leaves the viewport (bottom = window.innerHeight).
+                // The effective scrollable height for the parallax effect is the section's height minus the viewport height.
+                const scrollableHeight = sectionRect.height - window.innerHeight;
+                let scrollProgress = 0;
+
+                if (scrollableHeight > 0) {
+                    scrollProgress = Math.max(0, Math.min(1, (-sectionRect.top) / scrollableHeight));
+                }
+
+                // Calculate the maximum horizontal scroll distance
+                const maxScrollX = horizontalContainer.scrollWidth - horizontalContainer.clientWidth;
+
+                // Apply the horizontal translation
+                // Ensure maxScrollX is positive before applying transform
+                if (maxScrollX > 0) {
+                    horizontalContainer.style.transform = `translateX(-${scrollProgress * maxScrollX}px)`;
+                } else {
+                    horizontalContainer.style.transform = `translateX(0px)`; // No horizontal scroll if content doesn't overflow
+                }
+
+                // Console logging for debugging
+                console.log('--- Scroll Debug ---');
+                console.log('sectionRect.top:', sectionRect.top);
+                console.log('sectionRect.height:', sectionRect.height);
+                console.log('window.innerHeight:', window.innerHeight);
+                console.log('scrollableHeight:', scrollableHeight);
+                console.log('scrollProgress:', scrollProgress);
+                console.log('horizontalContainer.scrollWidth:', horizontalContainer.scrollWidth);
+                console.log('horizontalContainer.clientWidth:', horizontalContainer.clientWidth);
+                console.log('maxScrollX:', maxScrollX);
+                console.log('translateX value:', scrollProgress * maxScrollX);
+            }
+
+            // Listen for scroll events
+            window.addEventListener('scroll', updateHorizontalScroll);
+
+            // Also call it once on load to set initial position
+            updateHorizontalScroll();
+
+            // Re-calculate on resize in case dimensions change
+            window.addEventListener('resize', updateHorizontalScroll);
+        });
+    </script>
 </body>
 </html>
